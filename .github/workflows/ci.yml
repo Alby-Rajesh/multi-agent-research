@@ -37,4 +37,14 @@ jobs:
       - run: pip install -e ".[dev]"
       - run: ruff check src tests
       - run: ruff format --check src tests
-      - run: python -m pytest -q -W ignore::DeprecationWarning
+      - run: python -m pytest -q -W ignore::DeprecationWarning --junitxml=report.xml
+      - name: Annotate failing tests
+        if: failure()
+        run: |
+          python - <<'PY'
+          import xml.etree.ElementTree as ET
+          for case in ET.parse("report.xml").iter("testcase"):
+              for problem in list(case.iter("failure")) + list(case.iter("error")):
+                  text = (problem.get("message") or "") + " | " + (problem.text or "")[-1500:]
+                  print(f"::error title={case.get('classname')}.{case.get('name')}::" + text.replace("%", "%25").replace("\r", "").replace("\n", "%0A"))
+          PY
