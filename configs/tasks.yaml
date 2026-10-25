@@ -1,0 +1,51 @@
+research:
+  description: >
+    Research the question "{question}" using the knowledge base search tool. Run several searches with
+    different phrasings and collect every relevant fact.
+  expected_output: >
+    A bullet list of facts relevant to the question, each followed by its source file in square brackets.
+
+analysis:
+  description: >
+    Analyse the research findings for "{question}". Identify the direct answer, compare the options or
+    approaches involved, and note any gaps or uncertainty in the evidence.
+  expected_output: >
+    A short analysis with the direct answer, a comparison where relevant, and a list of gaps, keeping the
+    source citations from the research.
+
+report:
+  description: >
+    Write the final report answering "{question}" from the research and analysis. Keep every source citation.
+  expected_output: >
+    A markdown report under 400 words: a one-paragraph answer, supporting sections with bullet points, and
+    a Sources section listing the cited files.
+
+managed_report:
+  description: >
+    Produce a markdown report under 400 words that answers "{question}" using only facts from the knowledge
+    base, with the source file cited in square brackets after every factual claim and a Sources section at the end.
+  expected_output: >
+    A cited markdown report that answers the question.
+
+review:
+  description: >
+    Review this report for the question "{question}". Use the knowledge base search tool to verify each
+    factual claim and its citation.
+
+    Report:
+    {report}
+  expected_output: >
+    A verdict with approved set to true only if every claim is supported and cited, and specific feedback otherwise.
+
+revise:
+  description: >
+    Revise the report for "{question}" to address the reviewer's feedback. Use the knowledge base search tool
+    to fix or remove unsupported claims and keep every citation.
+
+    Current report:
+    {report}
+
+    Reviewer feedback:
+    {feedback}
+  expected_output: >
+    The complete revised markdown report.
