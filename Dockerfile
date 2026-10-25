@@ -6,7 +6,7 @@ ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 PIP_NO_CACHE_DIR=1 \
 WORKDIR /app
 COPY pyproject.toml README.md ./
 COPY src ./src
-RUN pip install .
+RUN pip install . && python -m nltk.downloader -d /usr/share/nltk_data stopwords punkt_tab
 COPY configs ./configs
 COPY corpus ./corpus
 COPY data ./data

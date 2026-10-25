@@ -77,8 +77,8 @@ def _vector_store(store: StoreSettings, embed_dim: int):
 
     url = make_url(store.dsn.get_secret_value())
     return PGVectorStore.from_params(
-        connection_string=url.set(drivername="postgresql+psycopg2"),
-        async_connection_string=url.set(drivername="postgresql+asyncpg"),
+        connection_string=url.set(drivername="postgresql+psycopg2").render_as_string(hide_password=False),
+        async_connection_string=url.set(drivername="postgresql+asyncpg").render_as_string(hide_password=False),
         table_name=store.table,
         embed_dim=embed_dim,
         hybrid_search=True,
