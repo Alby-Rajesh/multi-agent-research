@@ -1,7 +1,7 @@
 import os
 from functools import lru_cache
 from pathlib import Path
-from typing import Literal
+from typing import Any, Literal
 
 from pydantic import BaseModel, Field, SecretStr
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -15,6 +15,8 @@ class LLMSettings(BaseModel):
     max_tokens: int = Field(2048, gt=0)
     context_window: int = Field(32768, gt=0)
     timeout: float = Field(120, gt=0)
+    max_retries: int = Field(8, ge=0)
+    extra: dict[str, Any] = Field(default_factory=dict)
 
 
 class EmbeddingSettings(BaseModel):
@@ -23,6 +25,7 @@ class EmbeddingSettings(BaseModel):
     api_key: SecretStr = SecretStr("token-is-ignored")
     dim: int = Field(384, gt=0)
     batch_size: int = Field(32, gt=0)
+    send_dimensions: bool = False
 
 
 class StoreSettings(BaseModel):
@@ -48,6 +51,7 @@ class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_prefix="MAR_", env_nested_delimiter="__", env_file=".env", extra="ignore")
 
     llm: LLMSettings = LLMSettings()
+    judge: LLMSettings | None = None
     embedding: EmbeddingSettings = EmbeddingSettings()
     store: StoreSettings = StoreSettings()
     retrieval: RetrievalSettings = RetrievalSettings()

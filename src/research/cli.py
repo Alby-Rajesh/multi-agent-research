@@ -59,6 +59,7 @@ def evaluate(
         False, "--judge", help="Also score faithfulness, relevancy and correctness with the LLM."
     ),
     out: Path = typer.Option(Path("output/eval")),
+    workers: int = typer.Option(4, help="Parallel questions; lower it for rate-limited APIs."),
     verbose: bool = typer.Option(False, "--verbose", "-v"),
 ) -> None:
     from .evaluation import load_cases, run_eval
@@ -66,7 +67,9 @@ def evaluate(
 
     _logging(verbose)
     settings = get_settings()
-    summary = run_eval(knowledge_base(settings), load_cases(eval_set), llama_llm(settings) if judge else None, out)
+    summary = run_eval(
+        knowledge_base(settings), load_cases(eval_set), llama_llm(settings, judge=True) if judge else None, out, workers
+    )
     typer.echo(json.dumps(summary, indent=2))
 
 

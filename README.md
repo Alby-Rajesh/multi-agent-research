@@ -120,14 +120,23 @@ research evaluate --judge
 
 Results are written to `output/eval/`.
 
+**Measured results** (22 questions, pgvector hybrid store, `top_k=6`):
+
+| Hit rate | MRR | Source recall | Faithfulness | Relevancy | Correctness (1–5) |
+|---|---|---|---|---|---|
+| **1.00** | **1.00** | **1.00** | **1.00** | 0.95 | **4.95** |
+
+Answers from `gpt-oss-120b`, embeddings from `gemini-embedding-001` (768 dims), judged by `Qwen3.8-27B` — a different model family from the one that wrote the answers, so the judge is not grading its own output. With a corpus this small, retrieval is close to saturated; the numbers say more on your own documents.
+
 ## Configuration
 
 Environment variables with the `MAR_` prefix and `__` for nesting (see [`settings.py`](src/research/settings.py)):
 
 | Variable | Default | Purpose |
 |---|---|---|
-| `MAR_LLM__MODEL` / `BASE_URL` | `Qwen/Qwen2.5-7B-Instruct` / `http://localhost:8000/v1` | chat model for agents, answers and judging |
-| `MAR_EMBEDDING__MODEL` / `BASE_URL` / `DIM` | `BAAI/bge-small-en-v1.5` / `http://localhost:8001/v1` / `384` | embedding model |
+| `MAR_LLM__MODEL` / `BASE_URL` | `Qwen/Qwen2.5-7B-Instruct` / `http://localhost:8000/v1` | chat model for agents and answers |
+| `MAR_JUDGE__*` | same as `MAR_LLM__*` | optional separate judge model for `evaluate --judge` |
+| `MAR_EMBEDDING__MODEL` / `BASE_URL` / `DIM` | `BAAI/bge-small-en-v1.5` / `http://localhost:8001/v1` / `384` | embedding model; set `MAR_EMBEDDING__SEND_DIMENSIONS=true` for APIs that shorten vectors on request |
 | `MAR_STORE__BACKEND` | `memory` | `memory` or `postgres` |
 | `MAR_STORE__DSN` | `postgresql://research:research@localhost:5432/research` | pgvector database |
 | `MAR_RETRIEVAL__TOP_K` | `6` | passages after fusion |

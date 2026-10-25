@@ -13,8 +13,8 @@ from .tools import KnowledgeBaseSearchTool
 log = logging.getLogger(__name__)
 
 
-def llama_llm(settings: Settings) -> OpenAILike:
-    s = settings.llm
+def llama_llm(settings: Settings, judge: bool = False) -> OpenAILike:
+    s = settings.judge if judge and settings.judge else settings.llm
     return OpenAILike(
         model=s.model,
         api_base=s.base_url,
@@ -23,6 +23,8 @@ def llama_llm(settings: Settings) -> OpenAILike:
         max_tokens=s.max_tokens,
         context_window=s.context_window,
         timeout=s.timeout,
+        max_retries=s.max_retries,
+        additional_kwargs=s.extra,
         is_chat_model=True,
         is_function_calling_model=False,
     )
@@ -31,7 +33,11 @@ def llama_llm(settings: Settings) -> OpenAILike:
 def embedding_model(settings: Settings) -> OpenAILikeEmbedding:
     s = settings.embedding
     return OpenAILikeEmbedding(
-        model_name=s.model, api_base=s.base_url, api_key=s.api_key.get_secret_value(), embed_batch_size=s.batch_size
+        model_name=s.model,
+        api_base=s.base_url,
+        api_key=s.api_key.get_secret_value(),
+        embed_batch_size=s.batch_size,
+        dimensions=s.dim if s.send_dimensions else None,
     )
 
 
